@@ -11,7 +11,7 @@ function TelegramWebAppDemo() {
 
     // Initialize Telegram WebApp
     const tg = window.Telegram.WebApp;
-    WebApp.ready();
+    tg.ready();
 
     // Set initial data
     setInitData(tg.initDataUnsafe);
@@ -41,31 +41,31 @@ function TelegramWebAppDemo() {
     console.log(`Is Expanded: ${tg.isExpanded}`);
   };
 
-  const sendMessage = () => {
-    const tg = window.Telegram.WebApp;
-    tg.sendData('Hello, World!');
-  };
+  // const sendMessage = () => {
+  //   const tg = window.Telegram.WebApp;
+  //   tg.sendData('Hello, World!');
+  // };
 
-  const showPopup = () => {
-    const tg = window.Telegram.WebApp;
-    tg.showPopup({
-      title: 'Popup Title',
-      message: 'This is a popup message',
-      buttons: [
-        {id: 'ok', type: 'ok', text: 'OK'},
-        {id: 'cancel', type: 'cancel'}
-      ]
-    }, (buttonId: string) => {
-      console.log('Button clicked:', buttonId);
-    });
-  };
+  // const showPopup = () => {
+  //   const tg = window.Telegram.WebApp;
+  //   tg.showPopup({
+  //     title: 'Popup Title',
+  //     message: 'This is a popup message',
+  //     buttons: [
+  //       {id: 'ok', type: 'ok', text: 'OK'},
+  //       {id: 'cancel', type: 'cancel'}
+  //     ]
+  //   }, (buttonId: string) => {
+  //     console.log('Button clicked:', buttonId);
+  //   });
+  // };
 
   return (
     <div style={{backgroundColor: window.Telegram.WebApp.backgroundColor}}>
       <h1>Telegram WebApp Demo</h1>
       <p>User ID: {userId}</p>
-      <button onClick={sendMessage}>Send 'Hello, World!'</button>
-      <button onClick={showPopup}>Show Popup</button>
+      {/* <button onClick={sendMessage}>Send 'Hello, World!'</button>
+      <button onClick={showPopup}>Show Popup</button> */}
       <h2>Init Data:</h2>
       <pre>{JSON.stringify(initData, null, 2)}</pre>
       <h2>Theme Params:</h2>
