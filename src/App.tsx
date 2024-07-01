@@ -65,11 +65,13 @@ function App() {
     try {
       const bookmarks = await prisma.bookmarks.findMany({
         where: {
-          userId: userId,
+          userId: 1,
         },
         take: 5, // Limit the results to the first 5
       });
       setBookmarks(bookmarks);
+      console.log(userId);
+
     } catch (error) {
       console.error('Error fetching bookmarks:', error);
       setError('Failed to fetch bookmarks');
