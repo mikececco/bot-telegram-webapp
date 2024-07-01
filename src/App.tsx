@@ -93,7 +93,7 @@ function App() {
           ))}
         </ul>
       )}
-      <h2>Init Data:</h2>
+      <h2>Init data:</h2>
       <pre>{JSON.stringify(initData, null, 2)}</pre>
       <h2>Theme Params:</h2>
       <pre>{JSON.stringify(themeParams, null, 2)}</pre>
