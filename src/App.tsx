@@ -24,7 +24,7 @@ function App() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    console.log(WebApp.initData);
+    window.console.log(WebApp.initData);
 
     // Initialize Telegram WebApp
     const tg = window.Telegram.WebApp;
@@ -55,9 +55,9 @@ function App() {
 
   const setViewportData = () => {
     const tg = window.Telegram.WebApp;
-    console.log(`Viewport: ${window.innerWidth} x ${tg.viewportHeight.toFixed(2)}`);
-    console.log(`Stable Viewport: ${window.innerWidth} x ${tg.viewportStableHeight.toFixed(2)}`);
-    console.log(`Is Expanded: ${tg.isExpanded}`);
+    window.console.log(`Viewport: ${window.innerWidth} x ${tg.viewportHeight.toFixed(2)}`);
+    window.console.log(`Stable Viewport: ${window.innerWidth} x ${tg.viewportStableHeight.toFixed(2)}`);
+    window.console.log(`Is Expanded: ${tg.isExpanded}`);
   };
 
   async function fetchUserBookmarksFirst10(userId: number) {
@@ -70,7 +70,7 @@ function App() {
         take: 5, // Limit the results to the first 5
       });
       setBookmarks(bookmarks);
-      console.log(userId);
+      window.console.log(userId);
 
     } catch (error) {
       console.error('Error fetching bookmarks:', error);
