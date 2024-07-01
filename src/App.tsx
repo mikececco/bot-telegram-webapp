@@ -1,10 +1,27 @@
 import { WebApp } from '@grammyjs/web-app';
 import { useState, useEffect } from 'react';
+import { PrismaClient } from '@prisma/client';
 
-function TelegramWebAppDemo() {
-  const [userId, setUserId] = useState('');
+// Assuming you have a Prisma client set up
+const prisma = new PrismaClient();
+interface Bookmark {
+  id: number;
+  link: string;
+  userId: number;
+  updated_at: Date;
+  created_at: Date;
+  content: string;
+  folder: string;
+  name: string;
+}
+
+function App() {
+  const [userId, setUserId] = useState<number>(0); // or any initial number value
   const [themeParams, setThemeParams] = useState({});
   const [initData, setInitData] = useState({});
+  const [bookmarks, setBookmarks] = useState<Bookmark[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     console.log(WebApp.initData);
@@ -19,7 +36,9 @@ function TelegramWebAppDemo() {
 
     // Set user ID if available
     if (tg.initDataUnsafe.user) {
-      setUserId(tg.initDataUnsafe.user.id.toString());
+      const id = tg.initDataUnsafe.user.id;
+      setUserId(id);
+      fetchUserBookmarksFirst10(id);
     }
 
     // Event listeners
@@ -41,31 +60,39 @@ function TelegramWebAppDemo() {
     console.log(`Is Expanded: ${tg.isExpanded}`);
   };
 
-  // const sendMessage = () => {
-  //   const tg = window.Telegram.WebApp;
-  //   tg.sendData('Hello, World!');
-  // };
-
-  // const showPopup = () => {
-  //   const tg = window.Telegram.WebApp;
-  //   tg.showPopup({
-  //     title: 'Popup Title',
-  //     message: 'This is a popup message',
-  //     buttons: [
-  //       {id: 'ok', type: 'ok', text: 'OK'},
-  //       {id: 'cancel', type: 'cancel'}
-  //     ]
-  //   }, (buttonId: string) => {
-  //     console.log('Button clicked:', buttonId);
-  //   });
-  // };
+  async function fetchUserBookmarksFirst10(userId: number) {
+    setLoading(true);
+    try {
+      const bookmarks = await prisma.bookmarks.findMany({
+        where: {
+          userId: userId,
+        },
+        take: 5, // Limit the results to the first 5
+      });
+      setBookmarks(bookmarks);
+    } catch (error) {
+      console.error('Error fetching bookmarks:', error);
+      setError('Failed to fetch bookmarks');
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <div style={{backgroundColor: window.Telegram.WebApp.backgroundColor}}>
       <h1>Telegram WebApp Demo</h1>
       <p>User ID: {userId}</p>
-      {/* <button onClick={sendMessage}>Send 'Hello, World!'</button>
-      <button onClick={showPopup}>Show Popup</button> */}
+      {loading ? (
+        <p>Loading bookmarks...</p>
+      ) : error ? (
+        <p>Error: {error}</p>
+      ) : (
+        <ul>
+          {bookmarks.map(bookmark => (
+            <li key={bookmark.id}>{bookmark.content}</li>
+          ))}
+        </ul>
+      )}
       <h2>Init Data:</h2>
       <pre>{JSON.stringify(initData, null, 2)}</pre>
       <h2>Theme Params:</h2>
@@ -74,4 +101,4 @@ function TelegramWebAppDemo() {
   );
 }
 
-export default TelegramWebAppDemo;
+export default App;

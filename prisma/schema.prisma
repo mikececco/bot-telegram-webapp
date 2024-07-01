@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
+}
+
+model Session {
+  id    Int    @id @default(autoincrement())
+  key   String @unique
+  value String
+}
+
+model bookmarks {
+  id         Int          @id @default(autoincrement())
+  link       String
+  userId     Int          @default(1)
+  updated_at DateTime
+  created_at DateTime     @default(now())
+  content    String       @default("default content")
+  folder     String       @default("Bookmarks")
+  name       String       @default("My bookmark")
+  users      users        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  embeddings embeddings[]
+
+  @@unique([userId, link])
+}
+
+model embeddings {
+  id         Int                    @id @default(autoincrement())
+  content    String
+  embedding  Unsupported("vector")?
+  userId     Int
+  thoughtId  Int?
+  updated_at DateTime
+  created_at DateTime               @default(now())
+  bookmarkId Int?
+  bookmarks  bookmarks?             @relation(fields: [bookmarkId], references: [id])
+  thoughts   thoughts?              @relation(fields: [thoughtId], references: [id])
+  users      users                  @relation(fields: [userId], references: [id])
+}
+
+model thoughts {
+  id         Int          @id @default(autoincrement())
+  content    String
+  userId     Int
+  updated_at DateTime
+  created_at DateTime     @default(now())
+  embeddings embeddings[]
+  users      users        @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model users {
+  id          Int          @id @default(autoincrement())
+  telegram_id BigInt       @unique
+  username    String       @default("Unknown")
+  updated_at  DateTime
+  created_at  DateTime     @default(now())
+  bookmarks   bookmarks[]
+  embeddings  embeddings[]
+  thoughts    thoughts[]
+}
