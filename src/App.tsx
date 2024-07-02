@@ -24,29 +24,29 @@ function App() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    window.console.log(WebApp.initData);
 
     // Initialize Telegram WebApp
-    const tg = window.Telegram.WebApp;
-    tg.ready();
+    WebApp.ready();
 
     // Set initial data
-    setInitData(tg.initDataUnsafe);
-    setThemeParams(tg.themeParams);
-
+    setInitData(WebApp.initData);
+    setThemeParams(WebApp.themeParams);
+    console.log(WebApp.initData);
     // Set user ID if available
-    if (tg.initDataUnsafe.user) {
-      const id = tg.initDataUnsafe.user.id;
+    if (WebApp.initDataUnsafe.user) {
+      console.log('INSIDE');
+      const id = WebApp.initDataUnsafe.user.id;
       setUserId(id);
       fetchUserBookmarksFirst10(id);
     }
+    console.log('SKIPPED');
 
     // Event listeners
-    tg.onEvent('themeChanged', () => setThemeParams(tg.themeParams));
-    tg.onEvent('viewportChanged', setViewportData);
+    WebApp.onEvent('themeChanged', () => setThemeParams(WebApp.themeParams));
+    WebApp.onEvent('viewportChanged', setViewportData);
 
     // Set header color
-    tg.setHeaderColor('secondary_bg_color');
+    WebApp.setHeaderColor('secondary_bg_color');
 
     return () => {
       // Clean up event listeners if necessary
@@ -54,10 +54,10 @@ function App() {
   }, []);
 
   const setViewportData = () => {
-    const tg = window.Telegram.WebApp;
-    window.console.log(`Viewport: ${window.innerWidth} x ${tg.viewportHeight.toFixed(2)}`);
-    window.console.log(`Stable Viewport: ${window.innerWidth} x ${tg.viewportStableHeight.toFixed(2)}`);
-    window.console.log(`Is Expanded: ${tg.isExpanded}`);
+    const WebApp = Telegram.WebApp;
+    console.log(`Viewport: ${innerWidth} x ${WebApp.viewportHeight.toFixed(2)}`);
+    console.log(`Stable Viewport: ${innerWidth} x ${WebApp.viewportStableHeight.toFixed(2)}`);
+    console.log(`Is Expanded: ${WebApp.isExpanded}`);
   };
 
   async function fetchUserBookmarksFirst10(userId: number) {
@@ -70,7 +70,7 @@ function App() {
         take: 5, // Limit the results to the first 5
       });
       setBookmarks(bookmarks);
-      window.console.log(userId);
+      console.log(userId);
 
     } catch (error) {
       console.error('Error fetching bookmarks:', error);
@@ -81,7 +81,7 @@ function App() {
   }
 
   return (
-    <div style={{backgroundColor: window.Telegram.WebApp.backgroundColor}}>
+    <div style={{backgroundColor: Telegram.WebApp.backgroundColor}}>
       <h1>Telegram WebApp Demo</h1>
       <p>User ID: {userId}</p>
       {loading ? (
